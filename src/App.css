@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+}
+
+.board {
+  width: calc(64px * 8);
+  height: calc(64px * 8);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cell {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cell img {
+  width: 48px;
+  height: 48px;
+}
+
+.black {
+  background-color: rgb(114, 114, 114);
+}
+
+.white {
+  background-color: rgb(201, 201, 201);
+}
+
+.selected {
+  background-color: rgb(54, 178, 172);
+}
+
+.available {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background-color: rgb(54, 178, 172);
+}
+
+.right-side {
+  align-content: center;
+  justify-content: center;
+  background-color: "#ecf0f1";
+  float: right;
+  position: "absolute";
+  top: "50%";
+  left: "50%";
+  transform: "translate(-50%, -50%)";
+}
+
+.lost {
+  height: calc(210px);
+  padding: 30px;
+  margin-left: 50px;
+  background-color: rgba(224, 224, 224, 0.98);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #000000;
+}
+.marginleft {
+  margin-right: 30px;
+  justify-content: center;
+  align-items: center;
+}
+.c-button {
+  margin-right: 30px;
+  appearance: none;
+  border: 0;
+  border-radius: 5px;
+  background: rgb(0, 0, 0);
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 16px;
+}
+.c-button:hover {
+  background: #2a2a2a;
+}
+
+.c-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px #e7ffff7f;
+}
