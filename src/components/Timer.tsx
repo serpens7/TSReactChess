@@ -1,22 +1,40 @@
 import React, { FC, useState, useRef, useEffect } from "react";
-import { Figure } from "../models/figures/Figure";
 import { Player } from "../models/Player";
 import { Colors } from "../models/Colors";
-import BoardComponent from "./BoardComponent";
+import EndOfTheGame from "./endOfTheGame/EndOfTheGame";
+import { Board } from "../models/Board";
+import { Cell } from "../models/Cell";
 
-interface TimerProps {
+interface EndOfTheGameComponentProps {
+  board: Board;
+  selectedCell: Cell | null;
   currentPlayer: Player | null;
   restart: () => void;
+  swapPlayer: () => void;
+  setSelectedCell: (cell: Cell | null) => void;
 }
 
-const Timer: FC<TimerProps> = ({ currentPlayer, restart }) => {
+const EndOfTheGameComponent: FC<EndOfTheGameComponentProps> = ({
+  setSelectedCell,
+  selectedCell,
+  board,
+  currentPlayer,
+  restart,
+  swapPlayer,
+}) => {
   const [whiteTime, setWhiteTime] = useState(300);
   const [blackTime, setBlackTime] = useState(300);
   const timer = useRef<null | ReturnType<typeof setInterval>>(null);
 
+  const [modal, setModal] = useState(false);
+
   useEffect(() => {
-    startTimer();
+    if (whiteTime > 0 && blackTime > 0) startTimer();
   }, [currentPlayer]);
+
+  useEffect(() => {
+    createEndGameForm();
+  }, [whiteTime, blackTime, board]);
 
   function startTimer() {
     if (timer.current) {
@@ -29,6 +47,12 @@ const Timer: FC<TimerProps> = ({ currentPlayer, restart }) => {
     timer.current = setInterval(callback, 1000);
   }
 
+  function stopTimer() {
+    if (timer.current) {
+      clearInterval(timer.current);
+    }
+  }
+
   function decrementBlackTime() {
     setBlackTime((prev) => prev - 1);
   }
@@ -38,23 +62,58 @@ const Timer: FC<TimerProps> = ({ currentPlayer, restart }) => {
   }
 
   const handleRestart = () => {
-    setWhiteTime(300);
-    setBlackTime(300);
-
+    setSelectedCell(null);
+    setWhiteTime(5);
+    setBlackTime(5);
     restart();
   };
 
+  const createEndGameForm = () => {
+    looseCauseOfTimer();
+    looseCauseOfCheckMate();
+  };
+
+  function looseCauseOfTimer() {
+    if (whiteTime === 0 || blackTime === 0) {
+      swapPlayer();
+      stopTimer();
+      setModal(true);
+    }
+  }
+
+  function looseCauseOfCheckMate() {
+    if (board.checkMate === true) {
+      swapPlayer();
+      console.log("mate");
+      setModal(true);
+    }
+  }
+
   return (
-    <div>
+    <div onChange={createEndGameForm}>
       <h2 className="marginleft">Черные: {blackTime}</h2>
       <div>
-        <button className="c-button" onClick={handleRestart}>
+        <button
+          className="c-button"
+          style={{ marginRight: 30 }}
+          onClick={handleRestart}
+        >
           Перезапустить
         </button>
+        <div>
+          <EndOfTheGame
+            setSelectedCell={setSelectedCell}
+            board={board}
+            restart={handleRestart}
+            visible={modal}
+            setVisible={setModal}
+            currentPlayer={currentPlayer}
+          ></EndOfTheGame>
+        </div>
       </div>
       <h2 className="marginleft">Белые: {whiteTime}</h2>
     </div>
   );
 };
 
-export default Timer;
+export default EndOfTheGameComponent;

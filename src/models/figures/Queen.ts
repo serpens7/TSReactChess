@@ -3,10 +3,11 @@ import { Colors } from "../Colors";
 import { Figure, FigureNames } from "./Figure";
 import blackLogo from "../../assets/black-queen.png";
 import whiteLogo from "../../assets/white-queen.png";
+import { Board } from "../Board";
 
 export class Queen extends Figure {
-  constructor(color: Colors, cell: Cell) {
-    super(color, cell);
+  constructor(color: Colors, cell: Cell, board: Board) {
+    super(color, cell, board);
     this.name = FigureNames.QUEEN;
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
   }

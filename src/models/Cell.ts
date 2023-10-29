@@ -19,7 +19,7 @@ export class Cell {
     x: number,
     y: number,
     color: Colors,
-    figure: Figure | null
+    figure: Figure | null,
   ) {
     this.x = x;
     this.y = y;
@@ -37,12 +37,6 @@ export class Cell {
         this.board.addLostFigure(target.figure);
       }
       target.setFigureForLoop(this.figure, target);
-      //  if (
-      //this.figure.canMove(this) &&
-      //   target.figure?.name === FigureNames.KING
-      //  ) {
-      //   console.log("шах");
-      //  }
       this.pawnToQueenCheck(target);
       this.figure = null;
     }
@@ -58,7 +52,7 @@ export class Cell {
       } else {
         xColor = Colors.WHITE;
       }
-      new Queen(xColor, target);
+      new Queen(xColor, target, this.board);
     }
   }
 
@@ -122,29 +116,6 @@ export class Cell {
     for (let i = 1; i < absY; i++) {
       if (!this.board.getCell(this.x + dx * i, this.y + dy * i).isEmpty())
         return false;
-    }
-    return true;
-  }
-
-  canBlackPawnMoveForward(target: Cell) {
-    const check = this.y === 1 ? target.y - 2 > this.y : target.y - 1 > this.y;
-
-    if (this.x !== target.x || target.y < this.y || check) {
-      return false;
-    }
-    if (!this.board.getCell(this.x, this.y + 2).isEmpty()) {
-      return false;
-    }
-    return true;
-  }
-  canWhitePawnMoveForward(target: Cell) {
-    const check = this.y === 6 ? target.y + 2 < this.y : target.y + 1 < this.y;
-
-    if (this.x !== target.x || target.y > this.y || check) {
-      return false;
-    }
-    if (!this.board.getCell(this.x, this.y - 2).isEmpty() && this.y === 6) {
-      return false;
     }
     return true;
   }

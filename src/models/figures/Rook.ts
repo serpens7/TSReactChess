@@ -3,10 +3,17 @@ import { Colors } from "../Colors";
 import { Figure, FigureNames } from "./Figure";
 import blackLogo from "../../assets/black-rook.png";
 import whiteLogo from "../../assets/white-rook.png";
+import { Board } from "../Board";
 
 export class Rook extends Figure {
-  constructor(color: Colors, cell: Cell) {
-    super(color, cell);
+  alreadyMadeAMove: boolean = false;
+  constructor(
+    color: Colors,
+    cell: Cell,
+    board: Board,
+    alreadyMadeAMove: boolean,
+  ) {
+    super(color, cell, board);
     this.name = FigureNames.ROOK;
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
   }
@@ -15,5 +22,9 @@ export class Rook extends Figure {
     if (this.cell.isEmptyVertical(target)) return true;
     if (this.cell.isEmptyHorizontal(target)) return true;
     return false;
+  }
+  moveFigure(target: Cell) {
+    super.moveFigure(target);
+    this.alreadyMadeAMove = true;
   }
 }
