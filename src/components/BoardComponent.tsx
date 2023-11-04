@@ -4,7 +4,7 @@ import CellComponent from "./CellComponent";
 import { Cell } from "../models/Cell";
 import { Player } from "../models/Player";
 import { Colors } from "../models/Colors";
-import isCheckMate from "../models/checkMateChecker";
+import checkMateChecker from "../models/checkMateChecker";
 
 interface BoardProps {
   board: Board;
@@ -23,7 +23,6 @@ const BoardComponent: FC<BoardProps> = ({
   setSelectedCell,
   selectedCell,
 }) => {
-
   function click(cell: Cell) {
     if (
       selectedCell &&
@@ -58,7 +57,12 @@ const BoardComponent: FC<BoardProps> = ({
 
   function updateBoard() {
     const newBoard = board.getCopyBoard();
-    setBoard(newBoard); //форсапдейт компонента
+    setBoard(newBoard);
+    if (newBoard.checkCheckMate()) {
+      newBoard.checkMate = true;
+      console.log("мааат?!");
+    }
+    //форсапдейт компонента
   }
 
   return (

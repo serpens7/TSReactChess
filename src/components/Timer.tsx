@@ -30,11 +30,16 @@ const EndOfTheGameComponent: FC<EndOfTheGameComponentProps> = ({
 
   useEffect(() => {
     if (whiteTime > 0 && blackTime > 0) startTimer();
+    //   board.checkCheckMate();
   }, [currentPlayer]);
 
   useEffect(() => {
     createEndGameForm();
-  }, [whiteTime, blackTime, board]);
+  }, [whiteTime, blackTime]);
+
+  useEffect(() => {
+    createEndGameForm();
+  }, [board]);
 
   function startTimer() {
     if (timer.current) {
@@ -63,8 +68,9 @@ const EndOfTheGameComponent: FC<EndOfTheGameComponentProps> = ({
 
   const handleRestart = () => {
     setSelectedCell(null);
-    setWhiteTime(5);
-    setBlackTime(5);
+    setWhiteTime(15);
+    setBlackTime(15);
+    setModal(false);
     restart();
   };
 
@@ -75,17 +81,18 @@ const EndOfTheGameComponent: FC<EndOfTheGameComponentProps> = ({
 
   function looseCauseOfTimer() {
     if (whiteTime === 0 || blackTime === 0) {
-      swapPlayer();
       stopTimer();
       setModal(true);
     }
   }
 
   function looseCauseOfCheckMate() {
-    if (board.checkMate === true) {
-      swapPlayer();
+    if (board.checkMate) {
       console.log("mate");
+      stopTimer();
       setModal(true);
+
+      return;
     }
   }
 

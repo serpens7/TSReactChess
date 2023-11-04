@@ -7,7 +7,7 @@ import { Pawn } from "./figures/Pawn";
 import { Queen } from "./figures/Queen";
 import { Rook } from "./figures/Rook";
 import { Figure } from "./figures/Figure";
-import isCheckMate from "./checkMateChecker";
+import checkMateChecker from "./checkMateChecker";
 
 export class Board {
   cells: Cell[][] = [];
@@ -15,7 +15,7 @@ export class Board {
   lostWhiteFigures: Figure[] = [];
   checkMate: boolean = false;
   isPawnWentTwoCellLastTurn: boolean = false;
-  currentEnPassantFigure = null
+  currentEnPassantFigure = null;
 
   whiteKing?: King;
   blackKing?: King;
@@ -28,7 +28,7 @@ export class Board {
       king.madeAMove === false &&
       rook.madeAMove === false &&
       this.isCellUnderAttack(king.cell, this.getOppositeColor(king.color)) &&
-     !this.isCellUnderAttack(
+      !this.isCellUnderAttack(
         this.getCell(king.cell.x + direction, king.cell.y),
         this.getOppositeColor(king.color),
       ) &&
@@ -39,6 +39,27 @@ export class Board {
     )
       return true;
     return false;
+  }
+
+  checkCheckMate(this: Board): boolean {
+    for (let k = 0; k < this.cells.length; k++) {
+      for (let i = 0; i < this.cells.length; i++) {
+        const row = this.cells[i];
+        for (let j = 0; j < this.cells.length; j++) {
+          const target = row[j];
+          const selectedCell = this.getCell(k, i);
+          if (
+            selectedCell?.figure &&
+            this.isAvailableMove(selectedCell.figure, selectedCell, target)
+          ) {
+            console.log("nt");
+            return false;
+          }
+        }
+      }
+    }
+    console.log("bt");
+    return true;
   }
 
   public initCells() {
@@ -107,12 +128,13 @@ export class Board {
 
   public getCopyBoard(): Board {
     const newBoard = new Board();
+    newBoard.checkMate = this.checkMate;
     newBoard.cells = this.cells;
     newBoard.lostWhiteFigures = this.lostWhiteFigures;
     newBoard.lostBlackFigures = this.lostBlackFigures;
     newBoard.whiteKing = this.whiteKing;
     newBoard.blackKing = this.blackKing;
-    
+
     return newBoard;
   }
 
@@ -125,11 +147,12 @@ export class Board {
           selectedCell?.figure?.canMove(target) &&
           this.isAvailableMove(selectedCell.figure, selectedCell, target)
         );
-        if (selectedCell?.figure &&
-        !this.isAvailableMove(selectedCell.figure, selectedCell, target)) {
-        this.checkMate = true;
+        if (
+          selectedCell?.figure &&
+          !this.isAvailableMove(selectedCell.figure, selectedCell, target)
+        ) {
+          this.checkMate = true;
         }
-
       }
     }
   }

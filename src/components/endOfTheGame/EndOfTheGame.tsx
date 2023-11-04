@@ -31,17 +31,17 @@ const EndOfTheGame: FC<endOfTheGameProps> = ({
   }
 
   function whoIsAWinner(currentPlayer: Player | null) {
-    if (board.checkMate && currentPlayer?.color === Colors.WHITE) {
-      winner = "Мат! Белый игрок";
-    }
     if (currentPlayer?.color === Colors.WHITE) {
-      winner = "Время вышло! Белый игрок";
-    }
-    if (board.checkMate && currentPlayer?.color === Colors.BLACK) {
       winner = "Мат! Черный игрок";
     }
-    if (currentPlayer?.color === Colors.BLACK) {
+    if (!board.checkMate && currentPlayer?.color === Colors.WHITE) {
       winner = "Время вышло! Черный игрок";
+    }
+    if (currentPlayer?.color === Colors.BLACK) {
+      winner = "Мат! Белый игрок";
+    }
+    if (!board.checkMate && currentPlayer?.color === Colors.BLACK) {
+      winner = "Время вышло! Белый игрок";
     }
   }
 

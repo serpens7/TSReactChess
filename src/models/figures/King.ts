@@ -43,9 +43,9 @@ export class King extends Figure {
     const absX = Math.abs(target.x - this.cell.x);
     const absY = Math.abs(target.y - this.cell.y);
     // if (this.shortRoque(target)) return true;
-    if (this.longRoque(target)) return true;
+    // if (this.longRoque(target)) return true;
     if (!super.canMove(target)) return false;
-   
+
     if (absX <= 1 && absY <= 1) {
       return true;
     }
