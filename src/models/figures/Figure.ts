@@ -44,5 +44,6 @@ export class Figure {
 
   moveFigure(target: Cell) {
     this.board.isPawnWentTwoCellLastTurn = false;
+    this.madeAMove = true;
   }
 }

@@ -7,33 +7,30 @@ import blackLogo from "../../assets/black-king.png";
 import whiteLogo from "../../assets/white-king.png";
 
 export class King extends Figure {
-  alreadyMadeAMove: boolean = false;
-  constructor(
-    color: Colors,
-    cell: Cell,
-    board: Board,
-    alreadyMadeAMove: boolean,
-  ) {
+  constructor(color: Colors, cell: Cell, board: Board) {
     super(color, cell, board);
     this.name = FigureNames.KING;
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.board = board;
   }
 
-  shortRoque(target: Cell): boolean {
-    const shortRotate = target.x - this.cell.x;
-    if (shortRotate === 2 && target.y === this.cell.y) {
+  isShortRoque(target: Cell): boolean {
+    const longRoque = target.x - this.cell.x;
+    if (
+      longRoque === 2 &&
+      target.y === this.cell.y &&
+      this.board.isRoqueAvailable(this, target)
+    )
       return true;
-    }
     return false;
   }
 
-  longRoque(target: Cell): boolean {
-    const longRotate = target.x - this.cell.x;
+  isLongRoque(target: Cell): boolean {
+    const longRoque = target.x - this.cell.x;
     if (
-      this.board.isRoqueAvailable(this, target.figure) &&
-      longRotate === -3 &&
-      target.y === this.cell.y
+      longRoque === -2 &&
+      target.y === this.cell.y &&
+      this.board.isRoqueAvailable(this, target)
     )
       return true;
     return false;
@@ -42,8 +39,8 @@ export class King extends Figure {
   canMove(target: Cell): boolean {
     const absX = Math.abs(target.x - this.cell.x);
     const absY = Math.abs(target.y - this.cell.y);
-    // if (this.shortRoque(target)) return true;
-    // if (this.longRoque(target)) return true;
+    if (this.isShortRoque(target)) return true;
+    if (this.isLongRoque(target)) return true;
     if (!super.canMove(target)) return false;
 
     if (absX <= 1 && absY <= 1) {
@@ -52,7 +49,24 @@ export class King extends Figure {
     return false;
   }
   moveFigure(target: Cell): void {
+    if (this.isLongRoque(target)) {
+      const rook = this.board.getCell(0, this.cell.y).figure;
+      if (rook !== null) {
+        const cell = this.board.getCell(3, this.cell.y);
+        rook.cell.figure = null;
+        rook.cell = cell;
+        cell.figure = rook;
+      }
+    }
+    if (this.isShortRoque(target)) {
+      const rook = this.board.getCell(7, this.cell.y).figure;
+      if (rook !== null) {
+        const cell = this.board.getCell(5, this.cell.y);
+        rook.cell.figure = null;
+        rook.cell = cell;
+        cell.figure = rook;
+      }
+    }
     super.moveFigure(target);
-    this.alreadyMadeAMove = true;
   }
 }

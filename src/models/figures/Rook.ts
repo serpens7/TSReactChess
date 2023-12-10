@@ -7,12 +7,7 @@ import { Board } from "../Board";
 
 export class Rook extends Figure {
   alreadyMadeAMove: boolean = false;
-  constructor(
-    color: Colors,
-    cell: Cell,
-    board: Board,
-    alreadyMadeAMove: boolean,
-  ) {
+  constructor(color: Colors, cell: Cell, board: Board) {
     super(color, cell, board);
     this.name = FigureNames.ROOK;
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
@@ -24,7 +19,8 @@ export class Rook extends Figure {
     return false;
   }
   moveFigure(target: Cell) {
+    console.log(this.madeAMove);
     super.moveFigure(target);
-    this.alreadyMadeAMove = true;
+    console.log(this.madeAMove);
   }
 }

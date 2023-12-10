@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { Board } from "./models/Board";
 import BoardComponent from "./components/BoardComponent";
 import LostFigures from "./components/LostFigures";
-import EndOfTheGameComponent from "./components/Timer";
+import EndOfTheGameComponent from "./components/Observer";
 import "./App.css";
 import { Player } from "./models/Player";
 import { Colors } from "./models/Colors";
-import isCheckMate from "./models/checkMateChecker";
 import { Cell } from "./models/Cell";
 
 const App = () => {

@@ -30,7 +30,7 @@ export class Pawn extends Figure {
       }
       return false;
     };
-    if ( 
+    if (
       this.board.isPawnWentTwoCellLastTurn === true &&
       target.y === this.cell.y + this.direction &&
       ((target.x === this.cell.x - 1 && passantCondition(leftPassant)) ||
@@ -79,7 +79,7 @@ export class Pawn extends Figure {
       this.board.isPawnWentTwoCellLastTurn = true;
     } else this.board.isPawnWentTwoCellLastTurn = false; //условие для взятия на проходе
 
-    if (Math.abs(target.x - this.cell.x) === 1 && target.figure === null) {
+    if (Math.abs(target.x - this.cell.x) === 1 && !target.figure) {
       this.cell.board.getCell(target.x, target.y - this.direction).figure =
         null; //взятие на проходе
     }

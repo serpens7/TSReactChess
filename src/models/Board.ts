@@ -7,7 +7,6 @@ import { Pawn } from "./figures/Pawn";
 import { Queen } from "./figures/Queen";
 import { Rook } from "./figures/Rook";
 import { Figure } from "./figures/Figure";
-import checkMateChecker from "./checkMateChecker";
 
 export class Board {
   cells: Cell[][] = [];
@@ -20,42 +19,72 @@ export class Board {
   whiteKing?: King;
   blackKing?: King;
 
-  isRoqueAvailable(king: any, rook: any): boolean {
+  isRoqueAvailable(king: any, targetCell: any): boolean {
     //if (this.isCellUnderAttack(board.getCell(kingCell.x, kingCell.y), kingCell?.figure.color))
-    const direction = king.cell.x - rook.cell.x > 0 ? 1 : -1;
-    if (
-      king.color === rook.color &&
+    const direction = king.cell.x - targetCell.x > 0 ? -1 : 1;
+    const rookX = direction > 0 ? 7 : 0;
+    const rook = this.getCell(rookX, king.cell.y).figure;
+    if (!king || !rook || king.madeAMove || rook.madeAMove) return false;
+
+    if (this.isCellUnderAttack(king.cell, this.getOppositeColor(king.color)))
+      return false;
+
+    let cellX = king.cell.x + direction;
+    while (cellX !== rookX) {
+      const cell = this.getCell(cellX, king.cell.y);
+      if (cell.figure) return false;
+      if (this.isCellUnderAttack(cell, this.getOppositeColor(king.color)))
+        return false;
+      cellX += direction;
+    }
+    return true;
+
+    /*     king.color === (king.cell.x).color &&
       king.madeAMove === false &&
       rook.madeAMove === false &&
       this.isCellUnderAttack(king.cell, this.getOppositeColor(king.color)) &&
       !this.isCellUnderAttack(
         this.getCell(king.cell.x + direction, king.cell.y),
-        this.getOppositeColor(king.color),
+        this.getOppositeColor(king.color)
       ) &&
       !this.isCellUnderAttack(
         this.getCell(king.cell.x + 2 * direction, king.cell.y),
-        this.getOppositeColor(king.color),
+        this.getOppositeColor(king.color)
       )
     )
       return true;
+    return false; */
+  }
+
+  // 1. Взять цвет текущего игрока
+  // 2. Пройтись по всем фигурам этого цвета
+  // 3. Проверить может ли эта фигура хоть куда-то сходить
+  // 4. Если хоть одна может - не checkMate
+
+  isFigureHasAnyMove(figure: Figure): boolean {
+    for (let j = 0; j < this.cells.length; j++) {
+      for (let i = 0; i < this.cells.length; i++) {
+        const targetCell = this.getCell(j, i);
+        if (
+          figure?.canMove(targetCell) &&
+          this.isAvailableMove(figure, figure.cell, targetCell)
+        )
+          return true;
+      }
+    }
     return false;
   }
 
-  checkCheckMate(this: Board): boolean {
+  checkCheckMate(playerColor: Colors): boolean {
     for (let k = 0; k < this.cells.length; k++) {
       for (let i = 0; i < this.cells.length; i++) {
-        const row = this.cells[i];
-        for (let j = 0; j < this.cells.length; j++) {
-          const target = row[j];
-          const selectedCell = this.getCell(k, i);
-          if (
-            selectedCell?.figure &&
-            this.isAvailableMove(selectedCell.figure, selectedCell, target)
-          ) {
-            console.log("nt");
-            return false;
-          }
-        }
+        const cell = this.getCell(k, i);
+        if (
+          cell.figure &&
+          cell.figure.color === playerColor &&
+          this.isFigureHasAnyMove(cell.figure)
+        )
+          return false;
       }
     }
     console.log("bt");
@@ -79,7 +108,7 @@ export class Board {
   public isAvailableMove(
     figure: Figure,
     startCell: Cell,
-    targetCell: Cell,
+    targetCell: Cell
   ): boolean {
     let targetFigure = targetCell.figure;
     targetCell.figure = figure;
@@ -93,7 +122,7 @@ export class Board {
     }
     var isKingUnderAttack: boolean = this.isCellUnderAttack(
       king.cell,
-      this.getOppositeColor(king.color),
+      this.getOppositeColor(king.color)
     );
     figure.cell = startCell;
     startCell.figure = figure;
@@ -115,7 +144,7 @@ export class Board {
         (cell) =>
           cell.figure &&
           cell.figure.color === enemyColor &&
-          cell.figure.canMove(targetCell),
+          cell.figure.canMove(targetCell)
       );
       if (cellWithCheckFigure) return true;
     }
@@ -147,12 +176,6 @@ export class Board {
           selectedCell?.figure?.canMove(target) &&
           this.isAvailableMove(selectedCell.figure, selectedCell, target)
         );
-        if (
-          selectedCell?.figure &&
-          !this.isAvailableMove(selectedCell.figure, selectedCell, target)
-        ) {
-          this.checkMate = true;
-        }
       }
     }
   }
@@ -179,8 +202,8 @@ export class Board {
     new Bishop(Colors.BLACK, this.getCell(5, 0), this);
   }
   private addKing() {
-    this.whiteKing = new King(Colors.WHITE, this.getCell(4, 7), this, false);
-    this.blackKing = new King(Colors.BLACK, this.getCell(4, 0), this, false);
+    this.whiteKing = new King(Colors.WHITE, this.getCell(4, 7), this);
+    this.blackKing = new King(Colors.BLACK, this.getCell(4, 0), this);
   }
 
   private addPawn() {
@@ -203,9 +226,9 @@ export class Board {
   }
 
   private addRook() {
-    new Rook(Colors.WHITE, this.getCell(0, 7), this, false);
-    new Rook(Colors.WHITE, this.getCell(7, 7), this, false);
-    new Rook(Colors.BLACK, this.getCell(0, 0), this, false);
-    new Rook(Colors.BLACK, this.getCell(7, 0), this, false);
+    new Rook(Colors.WHITE, this.getCell(0, 7), this);
+    new Rook(Colors.WHITE, this.getCell(7, 7), this);
+    new Rook(Colors.BLACK, this.getCell(0, 0), this);
+    new Rook(Colors.BLACK, this.getCell(7, 0), this);
   }
 }

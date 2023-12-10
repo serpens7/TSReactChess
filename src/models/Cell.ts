@@ -19,7 +19,7 @@ export class Cell {
     x: number,
     y: number,
     color: Colors,
-    figure: Figure | null,
+    figure: Figure | null
   ) {
     this.x = x;
     this.y = y;

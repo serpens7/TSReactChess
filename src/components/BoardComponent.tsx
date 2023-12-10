@@ -4,7 +4,6 @@ import CellComponent from "./CellComponent";
 import { Cell } from "../models/Cell";
 import { Player } from "../models/Player";
 import { Colors } from "../models/Colors";
-import checkMateChecker from "../models/checkMateChecker";
 
 interface BoardProps {
   board: Board;
@@ -58,7 +57,7 @@ const BoardComponent: FC<BoardProps> = ({
   function updateBoard() {
     const newBoard = board.getCopyBoard();
     setBoard(newBoard);
-    if (newBoard.checkCheckMate()) {
+    if (currentPlayer && newBoard.checkCheckMate(currentPlayer.color)) {
       newBoard.checkMate = true;
       console.log("мааат?!");
     }
